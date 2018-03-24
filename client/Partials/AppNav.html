@@ -1,0 +1,15 @@
+<template name="AppNav">
+    <div class="appnav">
+        <ul>
+        	<li><a href="/user"><i class="fa fa-user"></i> <span>Twój jadłospis</span></a></li>
+        	<li><a href="/recipes"><i class="fa fa-book"></i> <span>Przepisy</span></a></li>
+            <li><a href="/products"><i class="fa fa-search"></i> <span>Produkty</span></a></li>
+            {{#if isInRole 'admin'}}
+            	<li><a href="/admin-panel"><i class="fa fa-users"></i> <span>Panel administratora</span></a></li>
+            {{/if}}
+            {{#if isInRole 'developer'}}
+                <li><a href="/dev-panel"><i class="fa fa-users"></i> <span>Panel developera</span></a></li>
+            {{/if}}
+        </ul>
+    </div>
+</template>

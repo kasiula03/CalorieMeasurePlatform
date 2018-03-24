@@ -1,0 +1,50 @@
+<template name="Recipes">
+	<table class="table" style="width:70%; margin-left: 10%; margin-top: 3%">
+				<thead>
+		       	<tr>
+			        <th>Nazwa przepisu</th>
+			        <th>Kalorie</th>
+			        <th>Białko</th>
+			        <th>Tłuszcz</th>
+			        <th>Węglowodany</th>
+			        <th>Produkty</th>
+			        <th></th>
+		        </tr>
+	      		</thead>
+				<tbody>
+					{{#each recipes}}
+					<tr>
+						<td style="vertical-align: baseline; padding-top: 0px;">{{this.name}}</td>
+						<td>{{this.calorie}}</td>
+						<td>{{this.protein}}</td>
+						<td>{{this.fat}}</td>
+						<td>{{this.carb}}</td>
+						<td></td>
+						<td></td>
+						<!-- <td>
+							<table class="list-group" style="margin-left: 2%; width: 400px;">
+								<thead>
+									<tr>
+								        <th>Nazwa produktu</th>
+								        <th>Ilość w gramach</th>
+								        <th></th>
+						        	</tr>
+				      			</thead>
+								<tbody>
+								<fieldset id="products">
+								{{#each this.products}}
+								<tr name="productList">
+										<td class="list-group-item clearfix">{{this.weight}} </td> 
+										<td> </td> 
+										<td><a href="#" class="deleteProduct"> X </a></td>
+								</tr>
+								{{/each}}
+								</fieldset>
+								</tbody>
+							</table>
+						</td> -->
+					</tr>
+					{{/each}}
+				</tbody>
+				</table>
+</template>
