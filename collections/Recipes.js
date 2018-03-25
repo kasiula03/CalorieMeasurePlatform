@@ -1,8 +1,9 @@
 Recipes = new Mongo.Collection('Recipes');
 
 var productWithWeigth = new SimpleSchema({
-	productId: {type: String},
-	weight: {type: Number}
+	productName: {type: String},
+	weight: {type: Number},
+	id: {type: String}
 });
 
 var recipesSchema = new SimpleSchema({

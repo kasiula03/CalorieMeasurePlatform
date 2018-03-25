@@ -1,6 +1,5 @@
 Meteor.methods({
 	addProduct: function(name, nutrs) {
-		console.log(parseFloat(nutrs.carb));
 		var product = {
 			name: name,
 			nutritionals: {

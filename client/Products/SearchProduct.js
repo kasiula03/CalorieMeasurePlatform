@@ -28,7 +28,7 @@ Template.search.events({
   'keyup [name="search"]': function ( event, template ) {
     let value = event.target.value.trim();
     let regex = new RegExp( value, 'i' );
-    let query = { name: regex };
+    let query = { productName: regex };
     Template.instance().searchQuery.set(value);
   },
   'click .product': function (event, template) {
@@ -39,10 +39,10 @@ Template.search.events({
     });
  
     if(!existProduct || existProduct.length == 0) {
-      currentProducts.push({name: this.name, weight: 0, id: this._id});
+      currentProducts.push({productName: this.name, weight: 0, id: this._id});
       Session.set('choosenProducts', currentProducts);
       $("#searchInput").val("");
     }
-    
+    console.log(Session.get('choosenProducts'));
   }
 });

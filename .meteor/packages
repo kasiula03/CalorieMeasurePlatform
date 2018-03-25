@@ -19,6 +19,7 @@ shell-server@0.3.1            # Server-side component of the `meteor shell` comm
 
 session
 underscore
+jquery
 
 kadira:flow-router
 kadira:blaze-layout
@@ -30,3 +31,8 @@ alanning:roles
 fortawesome:fontawesome
 twbs:bootstrap
 fourseven:scss
+
+accounts-base
+accounts-password
+useraccounts:unstyled
+useraccounts:flow-routing

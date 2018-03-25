@@ -1,4 +1,5 @@
 Session.setDefault('choosenProducts', []);
+Session.setDefault('recipeToEdit', {});
 
 Template.NewRecipes.onCreated(function() {
 	let template = Template.instance();
@@ -10,6 +11,9 @@ Template.NewRecipes.helpers({
 	choosenProducts: function() {
 		var products = Session.get('choosenProducts');
 		return products;
+	},
+	recipeName: function() {
+		return Session.get('recipeToEdit').name;
 	}
 });
 
@@ -28,9 +32,17 @@ Template.NewRecipes.events({
 	},
 	'submit form': function(event, template) {
 		event.preventDefault();
-		var recipeName = event.target.recipeName.value;
-		Meteor.call('addRecipe', recipeName, Session.get('choosenProducts'));
-		event.target.recipeName.value = ""
-		Session.set('choosenProducts', []);
+		var recipeId = Session.get('recipeToEdit')._id;
+		if(recipeId) {
+			var recipeName = event.target.recipeName.value;
+			Meteor.call('editRecipe', recipeId, recipeName, Session.get('choosenProducts'));
+			Session.set('openEditModal', false);
+		} else {
+			var recipeName = event.target.recipeName.value;
+			Meteor.call('addRecipe', recipeName, Session.get('choosenProducts'));
+			event.target.recipeName.value = ""
+			Session.set('choosenProducts', []);
+		}
+		
 	}
 });

@@ -1,5 +1,5 @@
 <template name="NewRecipes">
-	<form class="recipes-form" style="margin-left: 10%; margin-top: 5%">
+	<form id="new-recipe-form" class="recipes-form" style="margin-left: 10%;">
 		<fieldset>
 			<table style="width: 480px;">
 				<thead>
@@ -11,7 +11,7 @@
 	      		</thead>
 				<tbody>
 					<tr>
-						<td style="vertical-align: baseline; padding-top: 0px;"><input id="fileInput" name="recipeName" type="text"></td>
+						<td style="vertical-align: baseline; padding-top: 0px;"><input id="fileInput" name="recipeName" type="text" value={{recipeName}}></td>
 						<td>{{> search}}</td>
 						<td>
 							<table class="list-group" style="margin-left: 2%; width: 400px;">
@@ -26,7 +26,7 @@
 								<fieldset id="products">
 								{{#each choosenProducts}}
 								<tr name="productList">
-										<td class="list-group-item clearfix">{{this.name}} </td> 
+										<td class="list-group-item clearfix">{{this.productName}} </td> 
 										<td><input id="fileInput" name="productWeight" value={{this.weight}} type="text" style="width: 40px;"> </td> 
 										<td><a href="#" class="deleteProduct"> X </a></td>
 								</tr>
@@ -38,7 +38,7 @@
 					</tr>
 				</tbody>
 				</table>
-				<input type="submit" value="Dodaj" style="margin-left: 10%; display: block;">
+				<input type="submit" value="Zapisz" style="margin-left: 10%; display: block;">
 		</fieldset>
 	</form>
 </template>

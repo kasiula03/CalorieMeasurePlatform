@@ -1,11 +1,11 @@
 Meteor.methods({
 	addRecipe: function(recipeName, products) {
 		var productStats = getRecipeStats(products);
-		//console.log(productStats);
 		var productsWithWeight = products.map(function(product) {
 			return {
 				productName: getProductName(product.id),
-				weight: parseFloat(product.weight.replace(',', '.'))
+				weight: parseFloat(product.weight.replace(',', '.')),
+				id: product.id
 			}
 		});
 		var recipe = {
@@ -18,6 +18,29 @@ Meteor.methods({
 		}
 	
 		Recipes.insert(recipe);
+	},
+	editRecipe: function(recipeId, recipeName, products) {
+		var productStats = getRecipeStats(products);
+		var productsWithWeight = products.map(function(product) {
+			return {
+				productName: getProductName(product.id),
+				weight: parseFloat(product.weight.replace(',', '.')),
+				id: product.id
+			}
+		});
+		var recipe = {
+			name: recipeName,
+			calorie: productStats.calorie,
+			protein: productStats.protein,
+			fat: productStats.fat,
+			carb: productStats.carb,
+			products: productsWithWeight
+		}
+	
+		Recipes.update(recipeId, recipe);
+	},
+	deleteRecipe: function(recipeId) {
+		Recipes.remove(recipeId);
 	}
 });
 
@@ -31,9 +54,6 @@ getRecipeStats = function(products) {
 		stats["weight"] = parseFloat(product.weight);
 		return stats;
 	});
-	var calorieToSum = productsStats.map((product) => toSumPrepare(product, "calorie"));
-	
-	console.log(getSumStasts(calorieToSum));
 	return {
 		calorie: getSumStasts(productsStats.map((product) => toSumPrepare(product, "calorie"))),
 		protein: getSumStasts(productsStats.map((product) => toSumPrepare(product, "protein"))),
