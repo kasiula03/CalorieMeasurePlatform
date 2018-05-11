@@ -1,0 +1,12 @@
+<template name="SearchRecipe">
+      <input id="searchInput" type="text" name="search" class="form-control" placeholder="Znajdz przepis." style="width: 250px; display: table-caption;">
+      <ul class="list-group">
+          {{#each lookingProducts}}
+            <li class="list-group-item clearfix">
+              <a href="#" class="recipe">{{name}}</a>
+            </li>
+          {{else}}
+            <p class="alert alert-warning">Nie znaleziono produktu {{query}}.</p>
+          {{/each}}
+      </ul>
+</template>

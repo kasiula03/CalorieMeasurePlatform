@@ -1,4 +1,5 @@
 <template name="Menu"> 
+	
 	<div class="menu">
 		<h1>Jadłospis</h1>
 		<h4>Poniedziałek</h4>
@@ -24,5 +25,49 @@
 				</tr>
 			</tbody>
 		</table>
+		{{> AddToMenu}}
+	</div>
+
+	
+</template>
+
+<template name="AddToMenu">
+	<a href="#" class="newDay"><i class="fa fa-plus-square" style="font-size: x-large;"></i></a>
+	<div style="padding-left: 5%;">
+		{{#if addNewMenuDay}}
+		<form id="new-recipe-form" class="recipes-form" style="margin-left: 10%;">
+		<fieldset>
+			<h3>Dodaj nowy dzień</h3>
+			{{> SearchRecipe}}
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th>Nazwa</th>
+						<th>Ilość</th>
+						<th>Kalorie</th>
+						<th>Białko</th>
+						<th>Tłuszcze</th>
+						<th>Węglowodane</th>
+						<th>Produkty</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#each choosenRecipes}}
+					<tr>
+						<td>{{this.name}}</td>
+						<td><input id="fileInput" name="recipeAmount" value={{this.amount}} type="text" style="width: 40px;"> </td> 
+						<td>{{this.calorie}}</td>
+						<td>{{this.protein}}</td>
+						<td>{{this.fat}}</td>
+						<td>{{this.carb}}</td>
+						<td>{{> ShowRecipeProducts}} </td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
+			<input type="submit" value="Dodaj" style="margin-left: 10%; display: block;">
+		</fieldset>
+		</form>
+		{{/if}}
 	</div>
 </template>

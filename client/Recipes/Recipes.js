@@ -10,26 +10,18 @@ Template.Recipes.helpers({
 	recipes: function() {
 		return Recipes.find().fetch();
 	},
-	openEditModal: function() {
-		return Session.get('openEditModal');
-	},
 	addNewRecipe: function() {
 		return Session.get('addNewRecipe');
 	}
 });
 
+Template.ShowRecipeProducts.helpers({
+	openEditModal: function() {
+		return Session.get('openEditModal');
+	}
+});
+
 Template.Recipes.events({
-	'click .show-products': function(event, template) {
-		if(event.target.open) {
-			$(event.target).removeClass("fa-arrow-up").addClass("fa-arrow-down");
-			$(event.target).parent().parent().children('#products-list').css('display', "none");
-			event.target.open = false;
-		} else {
-			$(event.target).removeClass("fa-arrow-down").addClass("fa-arrow-up");
-			$(event.target).parent().parent().children('#products-list').css('display', "block");
-			event.target.open = true;
-		}
-	},
 	'click .edit-product': function(event, template) {
 		var products = this.products.map(product => {
 			return {
@@ -62,5 +54,19 @@ Template.Recipes.events({
 			Session.set('recipeToEdit', {});
 			$(event.target).removeClass("fa-plus-square").addClass("fa-minus-square");
 		}	
+	}
+});
+
+Template.ShowRecipeProducts.events({
+	'click .show-products': function(event, template) {
+		if(event.target.open) {
+			$(event.target).removeClass("fa-arrow-up").addClass("fa-arrow-down");
+			$(event.target).parent().parent().children('#products-list').css('display', "none");
+			event.target.open = false;
+		} else {
+			$(event.target).removeClass("fa-arrow-down").addClass("fa-arrow-up");
+			$(event.target).parent().parent().children('#products-list').css('display', "block");
+			event.target.open = true;
+		}
 	}
 });

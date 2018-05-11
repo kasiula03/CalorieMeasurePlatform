@@ -36,3 +36,6 @@ accounts-base
 accounts-password
 useraccounts:unstyled
 useraccounts:flow-routing
+
+spacebars
+raix:handlebar-helpers

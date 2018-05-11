@@ -1,0 +1,15 @@
+<template name="MainNav">
+    <nav class="main-nav">
+        <ul style="padding-top: 14px; padding-left: 20%">
+	  		<li><a href="/">Strona główna</a></li>
+        	<li><a href="/learn">Nauka</a></li>
+	  		{{#if $not currentUser}}
+            <li><a href="#" class="login-toggle">Zaloguj się</a></li>
+            {{/if}}
+            {{#if currentUser}}
+            <li class="logout"><a href="/logout">Wyloguj</a></li>
+            {{/if}}
+            
+        </ul>
+    </nav>
+</template>
