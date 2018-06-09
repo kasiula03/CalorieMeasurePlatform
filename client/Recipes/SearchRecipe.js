@@ -9,6 +9,7 @@ Template.SearchRecipe.onCreated( () => {
 
   template.searchQuery = new ReactiveVar();
   template.searching   = new ReactiveVar( false );
+
 });
 
 Template.SearchRecipe.helpers({
@@ -37,16 +38,27 @@ Template.SearchRecipe.events({
     Template.instance().searchQuery.set(value);
   },
   'click .recipe': function (event, template) {
-    var currentRecipes = Session.get('choosenRecipes');
+    var holdingName = template.data.toSave;
+    if(holdingName == undefined)
+      holdingName = "choosenRecipes";
+
     var id = this._id;
-    var existRecipes = currentRecipes.find(function(recipe) {
-      return recipe.id == id;
-    });
- 
-    if(!existRecipes || existRecipes.length == 0) {
-      currentRecipes.push({recipeName: this.name, id: this._id, amount: 0});
-      Session.set('choosenRecipes', currentRecipes);
-      $("#searchInput").val("");
+    var currentRecipes = [];
+    if(Session.get(holdingName) !== undefined) {
+        currentRecipes = Session.get(holdingName);;
     }
+
+    var position = currentRecipes.length;
+
+      currentRecipes.push({
+        recipeName: this.name, 
+        id: this._id, 
+        amount: 0,
+        position: position
+      });
+  
+      Session.set(holdingName, currentRecipes);
+      $("#searchInput").val("");
+    
   }
 });

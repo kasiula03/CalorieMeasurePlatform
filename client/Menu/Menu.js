@@ -1,12 +1,64 @@
 Session.setDefault('addNewMenuDay', false);
+Session.setDefault('editMenuDay', false);
+Session.setDefault('dayRecipes', []);
+Session.setDefault('choosenRecipes', []);
+
+Template.Menu.onRendered(function() {
+	this.subscribe('userMenu');
+  	this.subscribe('allRecipes');
+});
+
 
 Template.Menu.helpers({
 	menuDays: function() {
-		
+		var menus = Menu.find().fetch();
+		if(menus.length > 0) {
+			return menus.map(function(menu) {
+					return {
+						dayNumber: menu.dayNumber,
+						recipes : menu.recipesPerDays.map(function(day) {
+							if(Recipes.findOne(day.recipeId) !== undefined)
+							{
+								return {
+									recipeId: day.recipeId,
+									recipe: multiplyRecipeAttr(Recipes.findOne(day.recipeId), day.amount),
+									amount: day.amount,
+									dayNumber: menu.dayNumber,
+									position: day.position
+								}
+							}
+								
+						}).sort((a,b) => a.position > b.position)
+
+					}
+			});
+
+		} else {
+			return [];
+		}
+	},
+	editDay: function() {
+		return Session.get('editMenuDay');
+	},
+	addNewMenuDay: function () {
+		return Session.get('addNewMenuDay');
+	},
+	firstPosition: function(position) {
+		return position == 0;
+	},
+	lastPosition: function(recipes, position) {
+		var maxPosition = Math.max(...recipes.map(recipe => recipe.position));
+		return maxPosition == position;
+	},
+	getDay: function(dayNumber) {
+		return moment.weekdays(true, dayNumber - 1);
 	}
 });
 
-Template.AddToMenu.events({
+Template.Menu.events({
+	'click .remove-recipe-menu': function(event, target) {
+		Meteor.call('removeRecipeFromDay', this.dayNumber, this.position);
+	},
 	'click .newDay': function(event, target) {
 		if(Session.get('addNewMenuDay')) {
 			Session.set('addNewMenuDay', false);
@@ -16,36 +68,128 @@ Template.AddToMenu.events({
 			$(event.target).removeClass("fa-plus-square").addClass("fa-minus-square");
 		}	
 	},
-	'keyup [name="recipeAmount"]': function(event, template) {
-		let newAmount = event.target.value.trim();
-		var recipes = Session.get('choosenRecipes');
-		var id = this._id;
-		recipes.find(recipe => recipe.id == id).amount = newAmount;
-		
-		Session.set('choosenRecipes', recipes);
+	'click .edit-recipe-menu': function(event, target) {
+		if(event.target.open) {
+			$(event.target).removeClass("fa-minus-square").addClass("fa-plus-square");
+			$(event.target).parent().parent().children('#recipe-list').css('display', "none");
+			event.target.open = false;
+		} else {
+			$(event.target).removeClass("fa-plus-square").addClass("fa-minus-square");
+			$(event.target).parent().parent().children('#recipe-list').css('display', "block");
+			event.target.open = true;
+		}
 	},
-	'submit form': function(event, template) {
+	'click .move-recipe-down': function(event, template) {
+		Meteor.call('moveRecipe', this, 1);
+	},
+	'click .move-recipe-up': function(event, template) {
+		Meteor.call('moveRecipe', this, -1);
+	},
+	'submit #new-recipe-form': function(event, template) {
 		event.preventDefault();
-		console.log(Session.get('choosenRecipes'));
-		Meteor.call('addDayToMenu', Session.get('choosenRecipes'));
+		var dayNumber = parseInt(this.dayNumber);
+		Meteor.call('addRecipeToDay', Session.get(dayNumber), dayNumber);
+		Session.set(dayNumber, []);
 		
+	},
+	'submit #new-day-form': function(event, template) {
+		event.preventDefault();
+		Meteor.call('addDayToMenu', Session.get('choosenRecipes'));
+		Session.set('choosenRecipes', []);
 	}
+
 });
 
-Template.AddToMenu.helpers({
-	addNewMenuDay: function () {
-		return Session.get('addNewMenuDay');
-	},
-	choosenRecipes: function() {
-		var currentRecipes = Session.get('choosenRecipes');
-		return currentRecipes.map((recipe) => {
-			var foundRecipe = Recipes.findOne(recipe.id);
-			foundRecipe.calorie = foundRecipe.calorie * recipe.amount;
-			foundRecipe.protein = foundRecipe.protein * recipe.amount;
-			foundRecipe.fat = foundRecipe.fat * recipe.amount;
-			foundRecipe.carb = foundRecipe.carb * recipe.amount;
-			foundRecipe.amount = recipe.amount;
-			return foundRecipe;
-		});
+
+multiplyRecipeAttr = function(recipe, amount) {
+	return {
+		name: recipe.name,
+		calorie: recipe.calorie * amount,
+		protein: recipe.protein * amount,
+		fat: recipe.fat * amount,
+		carb: recipe.carb * amount
 	}
+}
+
+Template.AddToMenu.events({
+	'keyup [name="recipeAmount"]': function(event, template) {
+		var holdingName = template.data.handling;
+		if(holdingName == undefined)
+      		holdingName = "choosenRecipes";
+		let newAmount = event.target.value.trim();
+		var recipes = Session.get(holdingName);
+		var id = this._id;
+		var position = this.position;
+		recipes.find(recipe => recipe.id == id && recipe.position == position).amount = newAmount;
+		
+		Session.set(holdingName, recipes);
+	},
+	'click .remove-recipe-toAdd' : function(event, template) {
+		var holdingName = template.data.handling;
+		if(holdingName == undefined)
+      		holdingName = "choosenRecipes";
+      	console.log(holdingName);
+	},
+	'click .move-recipe-down': function(event, template) {
+		moveChoosenRecipe(template, this, 1);
+	},
+	'click .move-recipe-up': function(event, template) {
+		moveChoosenRecipe(template, this, -1);
+	}
+
+});
+
+moveChoosenRecipe = function(template, recipe, where) {
+	var holdingName = template.data.handling;
+	if(holdingName == undefined)
+      	holdingName = "choosenRecipes";
+    var currentRecipes = Session.get(holdingName);
+    console.log(currentRecipes);
+    console.log(recipe);
+    var recipeWithNewPositions = moveRecipePositionFrom(currentRecipes, recipe, where);
+    
+    Session.set(holdingName, recipeWithNewPositions); 
+}
+
+moveRecipePositionFrom = function(recipes, recipe, where) {
+	return recipes.map(recp => {
+		if(recp.position == recipe.position) {
+			recp.position += where;
+		}
+		else if (recp.position == recipe.position + where) {
+			recp.position -= where;
+
+		}
+		return recp;
+	});
+}
+
+Template.AddToMenu.helpers({
+	choosenRecipes: function(handling) {
+		var holdingName = handling;
+		if(holdingName == undefined)
+      		holdingName = "choosenRecipes";
+		var currentRecipes = Session.get(holdingName);
+		if(currentRecipes !== undefined) {
+			return currentRecipes.map((recipe) => {
+				var foundRecipe = Recipes.findOne(recipe.id);
+				foundRecipe.calorie = foundRecipe.calorie * recipe.amount;
+				foundRecipe.protein = foundRecipe.protein * recipe.amount;
+				foundRecipe.fat = foundRecipe.fat * recipe.amount;
+				foundRecipe.carb = foundRecipe.carb * recipe.amount;
+				foundRecipe.amount = recipe.amount;
+				foundRecipe.position = recipe.position;
+				return foundRecipe;
+			}).sort((a,b) => a.position > b.position);
+		}
+		else 
+			return [];
+	},
+	firstPosition: function(position) {
+		return position == 0;
+	},
+	lastPosition: function(recipes, position) {
+		var maxPosition = Math.max(...recipes.map(recipe => recipe.position));
+		return maxPosition == position;
+	} 
 });

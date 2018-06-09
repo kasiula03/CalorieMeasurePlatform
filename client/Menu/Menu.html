@@ -1,47 +1,81 @@
-<template name="Menu"> 
-	
+<template name="Menu"> 	
 	<div class="menu">
 		<h1>Jadłospis</h1>
-		<h4>Poniedziałek</h4>
-		<table class="table table-bordered">
-			<thead>
-				<tr>
-					<th>Nazwa</th>
-					<th>Ilość</th>
-					<th>Kalorie</th>
-					<th>Białko</th>
-					<th>Tłuszcze</th>
-					<th>Węglowodane</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>Owsianka</td>
-					<td>1</td>
-					<td>10</td>
-					<td>10</td>
-					<td>10</td>
-					<td>10</td>
-				</tr>
-			</tbody>
-		</table>
-		{{> AddToMenu}}
-	</div>
-
-	
-</template>
-
-<template name="AddToMenu">
-	<a href="#" class="newDay"><i class="fa fa-plus-square" style="font-size: x-large;"></i></a>
-	<div style="padding-left: 5%;">
-		{{#if addNewMenuDay}}
-		<form id="new-recipe-form" class="recipes-form" style="margin-left: 10%;">
-		<fieldset>
-			<h3>Dodaj nowy dzień</h3>
-			{{> SearchRecipe}}
+		{{#each menuDays}}
+		<h4>{{getDay this.dayNumber}}</h4>
 			<table class="table table-bordered">
 				<thead>
 					<tr>
+						<th></th>
+						<th>Nazwa</th>
+						<th>Ilość</th>
+						<th>Kalorie</th>
+						<th>Białko</th>
+						<th>Tłuszcze</th>
+						<th>Węglowodane</th>
+						<th>Przenieś</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#let allRecipes=this.recipes}}
+						{{#each this.recipes}}
+						{{#let position = this.position}}
+						<tr>
+							<td><a href="#" class="remove-recipe-menu"><i class="fa fa-trash"></i></a></td>
+							<td>{{this.recipe.name}}</td>
+							<td>{{this.amount}}</td>
+							<td>{{this.recipe.calorie}}</td>
+							<td>{{this.recipe.protein}}</td>
+							<td>{{this.recipe.fat}}</td>
+							<td>{{this.recipe.carb}}</td>
+							<td>
+								{{#if firstPosition position }}
+									<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
+								{{else if lastPosition allRecipes position}}
+									<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
+								{{else}}
+									<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
+									<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
+								{{/if}}
+								
+							</td>
+						</tr>
+						{{/let}}
+						{{/each}}
+					{{/let}}
+				</tbody>
+			</table>
+		<div>
+			<a href="#" class="edit-recipe-menu"><i class="fa fa-plus-square"></i></a>
+			<div class="recipe-list" id="recipe-list" style="display: none">
+			
+				<form id="new-recipe-form">
+				{{> AddToMenu handling=this.dayNumber}}
+				</form>
+			</div>
+		</div>
+		{{/each}}
+		<div style="padding-top: 5%;">
+			<h3>Dodaj dzień</h3>
+			<a href="#" class="newDay"><i class="fa fa-plus-square" style="font-size: large;"></i></a>
+			{{#if addNewMenuDay}}
+			<form id="new-day-form" class="recipes-form">
+				{{> AddToMenu}}
+			</form>
+			{{/if}}
+		</div>
+	</div>
+</template>
+
+
+
+<template name="AddToMenu">
+		<fieldset>
+			{{> SearchRecipe toSave=handling}}
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th></th>
 						<th>Nazwa</th>
 						<th>Ilość</th>
 						<th>Kalorie</th>
@@ -49,11 +83,14 @@
 						<th>Tłuszcze</th>
 						<th>Węglowodane</th>
 						<th>Produkty</th>
+						<th>Przenieś</th>
 					</tr>
 				</thead>
 				<tbody>
-					{{#each choosenRecipes}}
+					{{#let allRecipes=(choosenRecipes handling)}}
+					{{#each choosenRecipes handling}}
 					<tr>
+						<td><a href="#" class="remove-recipe-toAdd"><i class="fa fa-trash"></i></a></td>
 						<td>{{this.name}}</td>
 						<td><input id="fileInput" name="recipeAmount" value={{this.amount}} type="text" style="width: 40px;"> </td> 
 						<td>{{this.calorie}}</td>
@@ -61,13 +98,22 @@
 						<td>{{this.fat}}</td>
 						<td>{{this.carb}}</td>
 						<td>{{> ShowRecipeProducts}} </td>
+						<td>
+							{{#if firstPosition this.position }}
+								<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
+							{{else if lastPosition allRecipes this.position}}
+								<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
+							{{else}}
+								<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
+								<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
+							{{/if}}
+						</td>
 					</tr>
 					{{/each}}
+					{{/let}}
 				</tbody>
 			</table>
 			<input type="submit" value="Dodaj" style="margin-left: 10%; display: block;">
 		</fieldset>
-		</form>
-		{{/if}}
-	</div>
+		
 </template>
