@@ -36,6 +36,34 @@ Template.Menu.helpers({
 		} else {
 			return [];
 		}
+
+	},
+	allMenuRecipes: function() {
+		var menus = Menu.find().fetch();
+		if(menus.length > 0) {
+			var recipes = menus.map(function(menu) {
+					return {
+						dayNumber: menu.dayNumber,
+						recipes : menu.recipesPerDays.map(function(day) {
+							if(Recipes.findOne(day.recipeId) !== undefined)
+							{
+								return {
+									recipeId: day.recipeId,
+									recipe: multiplyRecipeAttr(Recipes.findOne(day.recipeId), day.amount),
+									amount: day.amount,
+									dayNumber: menu.dayNumber,
+									position: day.position
+								}
+							}
+								
+						}).sort((a,b) => a.position > b.position)
+
+					}
+			}).map(menu => menu.recipes);
+			return [].concat.apply([], recipes);
+		} else {
+			return [];
+		}
 	},
 	editDay: function() {
 		return Session.get('editMenuDay');
@@ -52,6 +80,49 @@ Template.Menu.helpers({
 	},
 	getDay: function(dayNumber) {
 		return moment.weekdays(true, dayNumber - 1);
+	},
+	sumRecipes: function(recipes) {
+		var nutrients = recipes.map(recipe => { return {
+			calorie: recipe.recipe.calorie,
+			carb: recipe.recipe.carb,
+			fat: recipe.recipe.fat,
+			protein: recipe.recipe.protein
+		}});
+		return {
+			calorie: nutrients.map(nut => nut.calorie).reduce((a,b) => a + b, 0),
+			protein: nutrients.map(nut => nut.protein).reduce((a,b) => a + b, 0),
+			fat: nutrients.map(nut => nut.fat).reduce((a,b) => a + b, 0),
+			carb: nutrients.map(nut => nut.carb).reduce((a,b) => a + b, 0)
+		}
+	},
+	accumulatedRecipes: function (recipesPerDay) {
+		var recipes = recipesPerDay.map(recipe =>  {
+			return {
+				products: recipe.recipe.products,
+				amount: parseInt(recipe.amount)
+			}
+		});
+		var multiplied = recipes.map(recipe => {
+			var amount = recipe.amount;
+			var products = recipe.products;
+			return multipleProductsWeight(products, amount);
+		});
+		var results = [].concat.apply([], multiplied);
+		var merged = new Map();
+		results.forEach(product => {
+			var empty = {
+				name: product.name,
+				id: product.id
+			}
+			if(merged.get(empty.id) !== undefined) {
+				merged.get(empty.id).weight += product.weight;
+			}
+			else {
+				empty.weight = product.weight;
+				merged.set(empty.id, empty);
+			}
+		});
+		console.log(merged);
 	}
 });
 
@@ -66,7 +137,8 @@ Template.Menu.events({
 		} else {
 			Session.set('addNewMenuDay', true);
 			$(event.target).removeClass("fa-plus-square").addClass("fa-minus-square");
-		}	
+		}
+		
 	},
 	'click .edit-recipe-menu': function(event, target) {
 		if(event.target.open) {
@@ -107,7 +179,8 @@ multiplyRecipeAttr = function(recipe, amount) {
 		calorie: recipe.calorie * amount,
 		protein: recipe.protein * amount,
 		fat: recipe.fat * amount,
-		carb: recipe.carb * amount
+		carb: recipe.carb * amount,
+		products: recipe.products
 	}
 }
 
@@ -191,5 +264,19 @@ Template.AddToMenu.helpers({
 	lastPosition: function(recipes, position) {
 		var maxPosition = Math.max(...recipes.map(recipe => recipe.position));
 		return maxPosition == position;
-	} 
+	},
+	sumRecipes: function(recipes) {
+		var nutrients = recipes.map(recipe => { return {
+			calorie: recipe.calorie,
+			carb: recipe.carb,
+			fat: recipe.fat,
+			protein: recipe.protein
+		}});
+		return {
+			calorie: nutrients.map(nut => nut.calorie).reduce((a,b) => a + b, 0),
+			protein: nutrients.map(nut => nut.protein).reduce((a,b) => a + b, 0),
+			fat: nutrients.map(nut => nut.fat).reduce((a,b) => a + b, 0),
+			carb: nutrients.map(nut => nut.carb).reduce((a,b) => a + b, 0)
+		}
+	}
 });

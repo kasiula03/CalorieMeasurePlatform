@@ -3,6 +3,11 @@
 	{{> MainNav}}
 	{{> LoginModal}}
     <main class="main-layout">
+    	  {{#if $.Session.get 'loginRedirectContext'}}
+		     <div class="error-msg">
+		        <h4>Nie jesteś uprawiony do oglądania tej strony. Zaloguj się. </h4>
+		    </div>
+		   {{/if}}
         {{> Template.dynamic template=main}}
     </main>
 </template>

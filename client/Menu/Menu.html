@@ -3,6 +3,7 @@
 		<h1>Jadłospis</h1>
 		{{#each menuDays}}
 		<h4>{{getDay this.dayNumber}}</h4>
+			{{#let allRecipes=this.recipes}}
 			<table class="table table-bordered">
 				<thead>
 					<tr>
@@ -13,11 +14,12 @@
 						<th>Białko</th>
 						<th>Tłuszcze</th>
 						<th>Węglowodane</th>
+						<th>Produkty (na jedną porcję)</th>
 						<th>Przenieś</th>
 					</tr>
 				</thead>
 				<tbody>
-					{{#let allRecipes=this.recipes}}
+					{{accumulatedRecipes allRecipes}}
 						{{#each this.recipes}}
 						{{#let position = this.position}}
 						<tr>
@@ -28,6 +30,7 @@
 							<td>{{this.recipe.protein}}</td>
 							<td>{{this.recipe.fat}}</td>
 							<td>{{this.recipe.carb}}</td>
+							<td>{{> ShowRecipeProducts this.recipe}} </td>
 							<td>
 								{{#if firstPosition position }}
 									<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
@@ -37,24 +40,43 @@
 									<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
 									<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
 								{{/if}}
-								
 							</td>
 						</tr>
 						{{/let}}
 						{{/each}}
-					{{/let}}
+						{{#with sumRecipes allRecipes}}
+						<tr style="background: #fffce9;">
+							<td></td>
+							<td><b>Sumarycznie</b></td>
+							<td></td>
+							<td>{{this.calorie}}</td>
+							<td>{{this.protein}}</td>
+							<td>{{this.fat}}</td>
+							<td>{{this.carb}}</td>
+							<td></td>
+							<td>
+							</td>
+						</tr>
+						{{/with}}
 				</tbody>
 			</table>
+			{{> SumRecipeProducts allRecipes=allRecipes}}
+			{{/let}}
 		<div>
 			<a href="#" class="edit-recipe-menu"><i class="fa fa-plus-square"></i></a>
 			<div class="recipe-list" id="recipe-list" style="display: none">
-			
 				<form id="new-recipe-form">
 				{{> AddToMenu handling=this.dayNumber}}
 				</form>
 			</div>
 		</div>
 		{{/each}}
+
+		{{#with menuRecipes = allMenuRecipes}}
+		<div style="padding-top: 5s%;">
+			<h2>{{> SumRecipeProducts allRecipes=menuRecipes additionalText="dla całego jadłospisu"}}</h2>
+		</div>
+		{{/with}}
 		<div style="padding-top: 5%;">
 			<h3>Dodaj dzień</h3>
 			<a href="#" class="newDay"><i class="fa fa-plus-square" style="font-size: large;"></i></a>
@@ -110,6 +132,19 @@
 						</td>
 					</tr>
 					{{/each}}
+					{{#with sumRecipes allRecipes}}
+						<tr style="background: #fffce9;">
+							<td></td>
+							<td><b>Sumarycznie</b></td>
+							<td></td>
+							<td>{{this.calorie}}</td>
+							<td>{{this.protein}}</td>
+							<td>{{this.fat}}</td>
+							<td>{{this.carb}}</td>
+							<td></td>
+							<td></td>
+						</tr>
+					{{/with}}
 					{{/let}}
 				</tbody>
 			</table>
