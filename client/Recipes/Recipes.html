@@ -1,7 +1,7 @@
 <template name="Recipes">
 	<a href="#" class="newRecipe"><i class="fa fa-plus-square" style="font-size: x-large; margin-left: 10%"></i></a>
 	{{#if addNewRecipe}}
-		{{> NewRecipes}}
+	{{> NewRecipes}}
 	{{/if}}
 	<table class="table recipes-list" style="width:70%; margin-left: 10%;">
 		<thead>
@@ -17,6 +17,7 @@
 		</thead>
 		<tbody>
 			{{#each recipes}}
+			{{#with fixedRecipe}}
 			<tr>
 				<td style="vertical-align: baseline; padding-top: 0px;">{{this.name}}</td>
 				<td>{{this.calorie}}</td>
@@ -26,37 +27,8 @@
 				<td>{{> ShowRecipeProducts}}</td>
 				<td><a href="#" class="delete-recipe">X</a></td>
 			</tr>
+			{{/with}}
 			{{/each}}
 		</tbody>
 	</table>
-</template>
-
-<template name="ShowRecipeProducts">
-	<a href="#" class="show-products"><i class="fa fa-arrow-down" style="font-size: x-large;"></i></a>
-			<div class="products-list" id="products-list" style="display: none">
-				<table class="table list-group">
-					<thead>
-						<tr>
-							<th>Nazwa produktu</th>
-							<th>Ilość w gramach</th>
-						</tr>
-					</thead>
-					<tbody>
-						{{#each this.products}}
-						<tr name="productList">
-							<td class="list-group-item clearfix">{{this.productName}} </td> 
-							<td>{{this.weight}}</td> 
-						</tr>
-						{{/each}}
-						<tr><a href="#" class="edit-product"><i class="fa fa-edit" style="font-size: x-large; margin-top: 5%"></i></a></tr>
-						{{#if openEditModal}}
-						<div class="recipe-modal">
-							<a href="#" style="position: fixed;margin-left: 54%;margin-top: 4%;"><i class="fa fa-window-close" style="font-size: x-large; margin-top: 5%"></i></a>
-							{{> NewRecipes}}
-						</div>
-						{{/if}}
-					</tbody>
-				</table>
-			</div>
-	
 </template>

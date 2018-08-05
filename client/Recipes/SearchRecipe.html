@@ -1,5 +1,5 @@
 <template name="SearchRecipe">
-      <input id="searchInput" type="text" name="search" class="form-control" placeholder="Znajdz przepis." style="width: 250px; display: table-caption;">
+      <input id="searchInput" type="text" name="search" class="form-control" placeholder="Znajdz przepis." style="width: 250px; display: table-caption;" value={{query}}>
       <ul class="list-group">
           {{#each lookingProducts}}
             <li class="list-group-item clearfix">

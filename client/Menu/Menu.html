@@ -2,153 +2,81 @@
 	<div class="menu">
 		<h1>Jadłospis</h1>
 		{{#each menuDays}}
-		<h4>{{getDay this.dayNumber}}</h4>
-			{{#let allRecipes=this.recipes}}
-			<table class="table table-bordered">
-				<thead>
-					<tr>
-						<th></th>
-						<th>Nazwa</th>
-						<th>Ilość</th>
-						<th>Kalorie</th>
-						<th>Białko</th>
-						<th>Tłuszcze</th>
-						<th>Węglowodane</th>
-						<th>Produkty (na jedną porcję)</th>
-						<th>Przenieś</th>
-					</tr>
-				</thead>
-				<tbody>
-					{{accumulatedRecipes allRecipes}}
-						{{#each this.recipes}}
-						{{#let position = this.position}}
-						<tr>
-							<td><a href="#" class="remove-recipe-menu"><i class="fa fa-trash"></i></a></td>
-							<td>{{this.recipe.name}}</td>
-							<td>{{this.amount}}</td>
-							<td>{{this.recipe.calorie}}</td>
-							<td>{{this.recipe.protein}}</td>
-							<td>{{this.recipe.fat}}</td>
-							<td>{{this.recipe.carb}}</td>
-							<td>{{> ShowRecipeProducts this.recipe}} </td>
-							<td>
-								{{#if firstPosition position }}
-									<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
-								{{else if lastPosition allRecipes position}}
-									<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
-								{{else}}
-									<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
-									<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
-								{{/if}}
-							</td>
-						</tr>
-						{{/let}}
-						{{/each}}
-						{{#with sumRecipes allRecipes}}
-						<tr style="background: #fffce9;">
-							<td></td>
-							<td><b>Sumarycznie</b></td>
-							<td></td>
-							<td>{{this.calorie}}</td>
-							<td>{{this.protein}}</td>
-							<td>{{this.fat}}</td>
-							<td>{{this.carb}}</td>
-							<td></td>
-							<td>
-							</td>
-						</tr>
-						{{/with}}
-				</tbody>
-			</table>
-			{{> SumRecipeProducts allRecipes=allRecipes}}
-			{{/let}}
-		<div>
-			<a href="#" class="edit-recipe-menu"><i class="fa fa-plus-square"></i></a>
-			<div class="recipe-list" id="recipe-list" style="display: none">
-				<form id="new-recipe-form">
-				{{> AddToMenu handling=this.dayNumber}}
-				</form>
-			</div>
-		</div>
+		{{> MenuDay}}
 		{{/each}}
+		<div style="border-bottom: 1px solid">
+		</div>
 
 		{{#with menuRecipes = allMenuRecipes}}
 		<div style="padding-top: 5s%;">
 			<h2>{{> SumRecipeProducts allRecipes=menuRecipes additionalText="dla całego jadłospisu"}}</h2>
 		</div>
 		{{/with}}
-		<div style="padding-top: 5%;">
+		<div style="padding-top: 2%;">
 			<h3>Dodaj dzień</h3>
 			<a href="#" class="newDay"><i class="fa fa-plus-square" style="font-size: large;"></i></a>
 			{{#if addNewMenuDay}}
-			<form id="new-day-form" class="recipes-form">
 				{{> AddToMenu}}
-			</form>
 			{{/if}}
 		</div>
 	</div>
 </template>
 
+<template name="MenuDay">
+	<h4>{{getDay this.dayNumber}}</h4>
+	{{#if editDay}}
+	{{> EditMenuDay}}
+	{{/if}}
+	<div class="menu-day-icons">
+		{{> SumRecipeProducts allRecipes=this.recipes}}
+		<a href="#" class="edit-day" data-toggle="tooltip" title="Edytuj jadłospis dla tego dnia">
+			<i class="fa fa-edit" style="font-size: x-large;"></i>
+		</a>
+		<a href="#" class="delete-day" data-toggle="tooltip" title="Usuń dzień">
+			<i class="fa fa-trash" style="font-size: x-large;"></i>
+		</a>
+		<!-- <a href="#" class="move-recipe-down" data-toggle="tooltip" title="Przesuń na poprzedni dzień">
+			<i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i>
+		</a>
+		<a href="#" class="move-recipe-up" data-toggle="tooltip" title="Przesuń na następny dzień" style="pointer-events: none;">
+			<i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i>
+		</a> -->
+	</div>
+	<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Nazwa</th>
+				<th>Ilość (w porcjach lub gramach)</th>
+				<th>Kalorie</th>
+				<th>Białko</th>
+				<th>Tłuszcze</th>
+				<th>Węglowodane</th>
+				<th>Produkty (na jedną porcję)</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{#let recipes = this.recipes}}
+			{{#each recipes}}
+			<tr>
+				{{> EachMenuRecord allRecipes=recipes recipe=this.recipe amount=this.amount dayNumber=this.dayNumber position=this.position}}
+			</tr>
+			{{/each}}
+			{{#with sumRecipes this.recipes}}
+			<tr style="background: #fffce9;">
+			{{> SummaryRecipes}}
+			</tr>
+			{{/with}}
+			{{/let}}
+		</tbody>
+	</table>
+</template>
 
-
-<template name="AddToMenu">
-		<fieldset>
-			{{> SearchRecipe toSave=handling}}
-			<table class="table table-bordered">
-				<thead>
-					<tr>
-						<th></th>
-						<th>Nazwa</th>
-						<th>Ilość</th>
-						<th>Kalorie</th>
-						<th>Białko</th>
-						<th>Tłuszcze</th>
-						<th>Węglowodane</th>
-						<th>Produkty</th>
-						<th>Przenieś</th>
-					</tr>
-				</thead>
-				<tbody>
-					{{#let allRecipes=(choosenRecipes handling)}}
-					{{#each choosenRecipes handling}}
-					<tr>
-						<td><a href="#" class="remove-recipe-toAdd"><i class="fa fa-trash"></i></a></td>
-						<td>{{this.name}}</td>
-						<td><input id="fileInput" name="recipeAmount" value={{this.amount}} type="text" style="width: 40px;"> </td> 
-						<td>{{this.calorie}}</td>
-						<td>{{this.protein}}</td>
-						<td>{{this.fat}}</td>
-						<td>{{this.carb}}</td>
-						<td>{{> ShowRecipeProducts}} </td>
-						<td>
-							{{#if firstPosition this.position }}
-								<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
-							{{else if lastPosition allRecipes this.position}}
-								<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
-							{{else}}
-								<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
-								<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
-							{{/if}}
-						</td>
-					</tr>
-					{{/each}}
-					{{#with sumRecipes allRecipes}}
-						<tr style="background: #fffce9;">
-							<td></td>
-							<td><b>Sumarycznie</b></td>
-							<td></td>
-							<td>{{this.calorie}}</td>
-							<td>{{this.protein}}</td>
-							<td>{{this.fat}}</td>
-							<td>{{this.carb}}</td>
-							<td></td>
-							<td></td>
-						</tr>
-					{{/with}}
-					{{/let}}
-				</tbody>
-			</table>
-			<input type="submit" value="Dodaj" style="margin-left: 10%; display: block;">
-		</fieldset>
-		
+<template name="SummaryRecipes">
+		<td><b>Sumarycznie</b></td>
+		<td></td>
+		<td>{{this.calorie}}</td>
+		<td>{{this.protein}}</td>
+		<td>{{this.fat}}</td>
+		<td>{{this.carb}}</td>
+		<td></td>
 </template>

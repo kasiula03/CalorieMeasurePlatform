@@ -1,0 +1,47 @@
+<template name="NearUpdate">
+	<div style="width: 40%">
+		<h4 style="text-align: center;"><b>Najbliższe planowane funkcjonalności</b></h4>
+		<table class="table table-condensed" style="width:100%">
+			<thead>
+				<tr>
+					<th>Nazwa</th>
+					<th>Opis</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each trelloFinishedTasks}}
+				<tr style="background-color:#a6e88b">
+					<td>{{this.name}}</td>
+					<td class="near-update-table-text">{{this.desc}}
+					</td>
+				</tr>
+				{{/each}}
+				{{#each trelloWorkingTasks}}
+				<tr style="background-color: #aedce9">
+					<td>{{this.name}}</td>
+					<td class="near-update-table-text">{{this.desc}}
+					</td>
+				</tr>
+				{{/each}}
+				{{#each trelloSoonTasks}}
+				<tr>
+					<td>{{this.name}}</td>
+					<td class="near-update-table-text">{{this.desc}}
+					</td>
+				</tr>
+				{{/each}}
+			</tbody>
+		</table>
+		<div class='my-legend'>
+			<div class='legend-title'>Legenda</div>
+			<div class='legend-scale'>
+				<ul class='legend-labels'>
+					<li><span style='background:#a6e88b'></span>Prace nad funkcjonalnością zostały zakończone i wejdzie ona w niedługim czasie.</li>
+					<li><span style='background:#aedce9;'></span>Prace nad funkcjonalnością zostały rozpoczęte.</li>
+					<li><span style='background:white;'></span>Prace nad funkcjonalnością są zaplanowane na najbliższą przyszłość.</li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+</template>

@@ -6,7 +6,8 @@ Meteor.methods({
 			return {
 				recipeId: recipe.id,
 				amount: recipe.amount,
-				position: recipe.position
+				position: recipe.position,
+				itProduct: recipe.itProduct
 			}
 		});
 		var recipesPerDays = menu.recipesPerDays;
@@ -21,6 +22,24 @@ Meteor.methods({
 		Menu.insert(newMenu);
 
 	},
+	editDayToMenu: function(recipes, dayNo) {
+		var menu = Menu.findOne({userId: this.userId, dayNumber: dayNo});
+		var recipesPerDays = menu.recipesPerDays;
+		var recipesWithAmount = recipes.map(function(recipe) {
+			return {
+				recipeId: recipe.recipeId,
+				amount: recipe.amount,
+				position: recipe.position,
+				itProduct: recipe.recipe.products == undefined
+			}
+		});
+		var newMenu = {
+			userId: this.userId,
+			dayNumber: dayNo,
+			recipesPerDays: recipesWithAmount
+		};
+		Menu.update(menu._id, newMenu);
+	},
 	addRecipeToDay: function (recipes, dayNo) {
 		var menu = Menu.findOne({userId: this.userId, dayNumber: dayNo});
 		var recipesPerDays = menu.recipesPerDays;
@@ -30,7 +49,8 @@ Meteor.methods({
 			recipesPerDays.push( {
 				recipeId: recipe.id,
 				amount: recipe.amount,
-				position: lastPosition + 1
+				position: lastPosition + 1,
+				itProduct: recipe.itProduct
 			});
 			lastPosition +=1;
 		});
@@ -45,33 +65,33 @@ Meteor.methods({
 		Menu.update(menu._id, newMenu);
 
 	},
+	removeMenuDay: function(dayNo) {
+		var menu = Menu.findOne({userId: this.userId, dayNumber: dayNo});
+		Menu.remove(menu._id);
+	},
 	removeRecipeFromDay: function(dayNo, position) {
 		var menu = Menu.findOne({userId: this.userId, dayNumber: dayNo});
 		var recipesPerDays = menu.recipesPerDays;
 		var recipeWithout = recipesPerDays.filter(e =>  e.position !== position);
 		menu.recipesPerDays = recipeWithout;
-		if(recipeWithout.length == 0) {
-			Menu.remove(menu._id);
-		} else {
-			Menu.update(menu._id, menu);
-		}
-		
+		Menu.update(menu._id, menu);
 	},
-	moveRecipe: function(recipe, where) {
-		var menu = Menu.findOne({userId: this.userId, dayNumber: recipe.dayNumber});
+	moveRecipe: function(dayNr, recipePosition, where) {
+		var menu = Menu.findOne({userId: this.userId, dayNumber: dayNr});
 		var recipesPerDays = menu.recipesPerDays;
-		var recipesWithNewPosition = moveRecipePositionFrom(recipesPerDays, recipe, where);
+		console.log(recipesPerDays);
+		var recipesWithNewPosition = moveRecipePositionFrom(recipesPerDays, recipePosition, where);
 		menu.recipesPerDays = recipesWithNewPosition;
 		Menu.update(menu._id, menu);
 	}
 });
 
-moveRecipePositionFrom = function(recipes, recipe, where) {
+moveRecipePositionFrom = function(recipes, recipePosition, where) {
 	return recipes.map(recp => {
-		if(recp.position == recipe.position) {
+		if(recp.position == recipePosition) {
 			recp.position += where;
 		}
-		else if (recp.position == recipe.position + where) {
+		else if (recp.position == recipePosition + where) {
 			recp.position -= where;
 
 		}

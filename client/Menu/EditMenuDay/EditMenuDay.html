@@ -1,0 +1,62 @@
+<template name="EditMenuDay">
+	<div id="EditDayModal" class="modal">
+		<div class="modal-content">
+			<span class="close">&times;</span>
+			<form id="edit-day-form" class="recipes-form">
+				{{> SearchRecipe toSave="toEdit"}}
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th></th>
+							<th>Nazwa</th>
+							<th>Ilość (w porcjach lub gramach)</th>
+							<th>Kalorie</th>
+							<th>Białko</th>
+							<th>Tłuszcze</th>
+							<th>Węglowodane</th>
+							<th>Produkty (na jedną porcję)</th>
+							<th>Przenieś</th>
+						</tr>
+					</thead>
+					<tbody>
+						{{#let recipes = newRecipes}}
+						{{#each recipes}}
+						<tr>
+							<td>
+								<a href="#" class="delete-recipe" data-toggle="tooltip" title="Usuń dzień">
+									<i class="fa fa-trash" style="font-size: x-large;"></i>
+								</a>
+							</td>
+							<td>{{recipe.name}}</td>
+							<td><input id="fileInput" name="recipeAmount" value={{this.amount}} type="text" style="width: 40px;"> </td>  
+							<td>{{recipe.calorie}}</td>
+							<td>{{recipe.protein}}</td>
+							<td>{{recipe.fat}}</td>
+							<td>{{recipe.carb}}</td>
+							<td>{{> ShowRecipeProducts recipe.recipe}} </td>
+							<td>
+								{{#if firstPosition this.position }}
+								<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
+								{{else if lastPosition recipes this.position}}
+								<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
+								{{else}}
+								<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
+								<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
+								{{/if}}
+							</td>
+						</tr>
+						{{/each}}
+						{{#with sumRecipes recipes}}
+						<tr style="background: #fffce9;">
+							<td></td>
+							{{> SummaryRecipes}}
+						</tr>
+						{{/with}}
+						{{/let}}
+					</tbody>
+				</table>
+				<input type="submit" value="Zapisz" style="margin-left: 10%; display: block;">
+			</form>
+		</div>
+	</div>
+</template>

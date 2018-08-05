@@ -42,7 +42,7 @@ Template.search.events({
       currentProducts.push({productName: this.name, weight: 0, id: this._id});
       Session.set('choosenProducts', currentProducts);
       $("#searchInput").val("");
+        Template.instance().searchQuery.set("");
     }
-    console.log(Session.get('choosenProducts'));
   }
 });

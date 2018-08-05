@@ -1,40 +1,55 @@
 <template name="Products">
-	<form class="products-form" style="margin-left: 10%; margin-top: 5%">
-		<fieldset>
-			<table class="table table-bordered">
-				<thead>
-		       	<tr>
-			        <th>Nazwa produktu</th>
-			        <th>Kalorie w 100g</th>
-			        <th>Białko w 100g</th>
-			        <th>Tłuszcz w 100g</th>
-			        <th>Węglowodany w 100g</th>
-			        <th></th>
-		        </tr>
-	      		</thead>
-				<tbody>
-					<tr>
-						<td><input id="fileInput" name="productName" type="text"></td>
-						<td><input id="fileInput" name="productCalorie" type="text"></td>
-						<td><input id="fileInput" name="productProtein" type="text"></td>
-						<td><input id="fileInput" name="productFat" type="text"></td>
-						<td><input id="fileInput" name="productCarb" type="text"></td>
-						<td><input type="submit" value="Dodaj" style="margin-left: 40%; display: block;"></td>
-					</tr>
-					{{#each products}}
+	<div class="w-50 p-3" style="margin-left: 10%; margin-top: 5%;">
+		<form class="products-form">
+
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th>Nazwa produktu</th>
+							<th>Kalorie w 100g</th>
+							<th>Białko w 100g</th>
+							<th>Tłuszcz w 100g</th>
+							<th>Węglowodany w 100g</th>
+							<th>Może być posiłkiem</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><input id="fileInput" name="productName" type="text"></td>
+							<td><input id="fileInput" name="productCalorie" type="text"></td>
+							<td><input id="fileInput" name="productProtein" type="text"></td>
+							<td><input id="fileInput" name="productFat" type="text"></td>
+							<td><input id="fileInput" name="productCarb" type="text"></td>
+							<td>
+								<input type="checkbox" id="isMeal" name="isMeal" />
+        					</td>
+							<td><input type="submit" value="Dodaj"></td>
+						</tr>
+						{{#each products}}
 						<tr>{{> Product}}</tr>
-					{{/each}}
-				</tbody>
+						{{/each}}
+					</tbody>
 				</table>
-		</fieldset>
-	</form>
+
+		</form>
+	</div>
 </template>
 
 <template name="Product">
+	{{#with fixedProduct}}
 	<td>{{name}}</td>
 	<td>{{nutritionals.calorie}}</td>
 	<td>{{nutritionals.protein}}</td>
 	<td>{{nutritionals.fat}}</td>
 	<td>{{nutritionals.carb}}</td>
+	<td>
+		{{#if canBeMeal}} 
+			<input type="checkbox" id="isMeal" name="isMeal" checked />
+		{{else}}
+			<input type="checkbox" id="isMeal" name="isMeal" />
+		{{/if}}
+	</td>
 	<td><a href=# class="product-delete">X</a></td>
+	{{/with}}
 </template>

@@ -1,3 +1,7 @@
 .menu {
 	padding-left: 10%;
 }
+
+.menu-day-icons > a {
+	padding-right: 10px;
+}

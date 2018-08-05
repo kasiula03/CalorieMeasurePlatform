@@ -49,7 +49,16 @@ AccountsTemplates.addFields([
 
 ]);
 
+var hideErrorMsg = function(error, state){
+  if (!error) {
+    if (state === "signIn" || state === "signUp") {
+    	Session.set("loginRedirectContext", false);
+    }
+  }
+};
+
 AccountsTemplates.configure({
+	onSubmitHook: hideErrorMsg,
 	homeRoutePath: '/',
 	texts: {
 		sep: "lub",

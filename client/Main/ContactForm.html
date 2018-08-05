@@ -1,0 +1,41 @@
+<template name="ContactForm">
+	<div style="width: 40%">
+		{{#if displayInvalidEmailMsg}}
+			<div class="error-msg">
+		        <h4>Podany przez Ciebie adres email jest niepoprawny </h4>
+		    </div>
+		{{/if}}
+		<h4 style="text-align: center;">Formularz kontaktowy</h4>
+		<form id="send-email">
+			<div class="form-group">
+				<label class="col-2 col-form-label" for="userEmail">Adres email</label>
+				<div class="col-10">
+					<input type="text" name="userEmail" id="userEmail">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-2 col-form-label" for="userName">Imie</label>
+				<div class="col-10">
+					<input type="text" name="userName" id="userName">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-2 col-form-label" for="msgType">Typ wiadomości</label>
+				<div class="col-10">
+					<select name="msgType" id="msgType">
+						<option value="Bug">Bug</option>
+						<option value="Sugestia">Sugestia</option>
+						<option value="Inne">Inne</option>
+					</select> 
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-2 col-form-label" for="msgText">Wiadomość</label>
+				<div class="col-10">
+					<textarea name="msgText" id="msgText" form="send-email" rows="4" cols="40"></textarea>
+				</div>
+			</div>
+			<button type="submit" class="btn btn-primary">Wyślij</button>
+		</form>
+	</div>
+</template>

@@ -12,12 +12,11 @@ Template.Recipes.helpers({
 	},
 	addNewRecipe: function() {
 		return Session.get('addNewRecipe');
-	}
-});
-
-Template.ShowRecipeProducts.helpers({
-	openEditModal: function() {
-		return Session.get('openEditModal');
+	},
+	fixedRecipe: function() {
+		var fixedRecipe = setPrecisionToNutririonals(this);
+		fixedRecipe.editable = true;
+		return fixedRecipe;
 	}
 });
 
@@ -26,7 +25,7 @@ Template.Recipes.events({
 		var products = this.products.map(product => {
 			return {
 				productName: product.productName,
-				weight: product.weight.toString(),
+				weight: parseFloat(product.weight).toPrecision(3).toString(),
 				id: product.id
 			}
 		});
@@ -54,19 +53,5 @@ Template.Recipes.events({
 			Session.set('recipeToEdit', {});
 			$(event.target).removeClass("fa-plus-square").addClass("fa-minus-square");
 		}	
-	}
-});
-
-Template.ShowRecipeProducts.events({
-	'click .show-products': function(event, template) {
-		if(event.target.open) {
-			$(event.target).removeClass("fa-arrow-up").addClass("fa-arrow-down");
-			$(event.target).parent().parent().children('#products-list').css('display', "none");
-			event.target.open = false;
-		} else {
-			$(event.target).removeClass("fa-arrow-down").addClass("fa-arrow-up");
-			$(event.target).parent().parent().children('#products-list').css('display', "block");
-			event.target.open = true;
-		}
 	}
 });

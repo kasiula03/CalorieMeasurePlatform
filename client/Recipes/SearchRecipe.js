@@ -8,14 +8,10 @@ Template.SearchRecipe.onCreated( () => {
   let template = Template.instance();
 
   template.searchQuery = new ReactiveVar();
-  template.searching   = new ReactiveVar( false );
 
 });
 
 Template.SearchRecipe.helpers({
-  searching() {
-    return Template.instance().searching.get();
-  },
   query() {
     return Template.instance().searchQuery.get();
   },
@@ -23,7 +19,8 @@ Template.SearchRecipe.helpers({
     if(Template.instance().searchQuery.get()) {
       let regex = new RegExp( Template.instance().searchQuery.get(), 'i' );
       let query = { name: regex };
-      return Recipes.find(query).fetch();
+      let queryProduct = { name: regex, canBeMeal: true };
+      return Recipes.find(query).fetch().concat(Products.find(queryProduct).fetch());
     } else {
       return null;
     }
@@ -38,6 +35,7 @@ Template.SearchRecipe.events({
     Template.instance().searchQuery.set(value);
   },
   'click .recipe': function (event, template) {
+    event.preventDefault();
     var holdingName = template.data.toSave;
     if(holdingName == undefined)
       holdingName = "choosenRecipes";
@@ -45,20 +43,19 @@ Template.SearchRecipe.events({
     var id = this._id;
     var currentRecipes = [];
     if(Session.get(holdingName) !== undefined) {
-        currentRecipes = Session.get(holdingName);;
+      currentRecipes = Session.get(holdingName);;
     }
 
     var position = currentRecipes.length;
-
-      currentRecipes.push({
-        recipeName: this.name, 
-        id: this._id, 
-        amount: 0,
-        position: position
-      });
-  
-      Session.set(holdingName, currentRecipes);
-      $("#searchInput").val("");
-    
+    var prod = this.canBeMeal !== undefined;
+    currentRecipes.push({
+      recipeName: this.name, 
+      id: this._id, 
+      amount: 0,
+      position: position,
+      itProduct: prod
+    });
+    Session.set(holdingName, currentRecipes);
+    Template.instance().searchQuery.set("");
   }
 });

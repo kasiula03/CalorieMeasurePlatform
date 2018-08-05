@@ -1,0 +1,55 @@
+<template name="AddToMenu">
+	<form id="new-day-form" class="recipes-form">
+		<fieldset>
+			{{> SearchRecipe toSave=handling}}
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th></th>
+						<th>Nazwa</th>
+						<th>Ilość (w porcjach lub gramach)</th>
+						<th>Kalorie</th>
+						<th>Białko</th>
+						<th>Tłuszcze</th>
+						<th>Węglowodane</th>
+						<th>Produkty</th>
+						<th>Przenieś</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#let allRecipes=(choosenRecipes handling)}}
+					{{#each allRecipes}}
+					<tr>
+						<td><a href="#" class="remove-recipe-toAdd"><i class="fa fa-trash"></i></a></td>
+						<td>{{this.name}}</td>
+						<td><input id="fileInput" name="recipeAmount" value={{this.amount}} type="text" style="width: 40px;"> </td> 
+						<td>{{this.calorie}}</td>
+						<td>{{this.protein}}</td>
+						<td>{{this.fat}}</td>
+						<td>{{this.carb}}</td>
+						<td>{{> ShowRecipeProducts}} </td>
+						<td>
+							{{#if firstPosition this.position }}
+							<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
+							{{else if lastPosition allRecipes this.position}}
+							<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
+							{{else}}
+							<a href="#" class="move-recipe-down"><i class="fa fa-arrow-circle-down" style="font-size: x-large;"></i></a>
+							<a href="#" class="move-recipe-up"><i class="fa fa-arrow-circle-up" style="font-size: x-large;"></i></a>
+							{{/if}}
+						</td>
+					</tr>
+					{{/each}}
+					{{#with sumRecipes allRecipes}}
+					<tr>
+						<td></td>
+						{{> SummaryRecipes}}
+					</tr>
+					{{/with}}
+					{{/let}}
+				</tbody>
+			</table>
+			<input type="submit" value="Dodaj" style="margin-left: 10%; display: block;">
+		</fieldset>
+	</form>
+</template>
