@@ -12,6 +12,7 @@
 				<th>Tłuszcz</th>
 				<th>Węglowodany</th>
 				<th>Produkty</th>
+				<th>Instrukcja przygotowania</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -25,6 +26,17 @@
 				<td>{{this.fat}}</td>
 				<td>{{this.carb}}</td>
 				<td>{{> ShowRecipeProducts}}</td>
+				<td>
+					{{#if this.link}}
+						<a target="_blank" rel="noopener noreferrer" href={{this.link}}>Link</a>
+						<a href="#" class="addLink"><i class="fa fa-edit"></i></a>
+					{{else}}
+						<a href="#" class="addLink"><i class="fa fa-plus" style="font-size: x-large;"></i></a>
+					{{/if}}
+					<form id="edit-link" style="display: none">
+						<input id="linkTextBox" type="text"/>
+					</form>
+				</td>
 				<td><a href="#" class="delete-recipe">X</a></td>
 			</tr>
 			{{/with}}

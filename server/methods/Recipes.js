@@ -1,5 +1,5 @@
 Meteor.methods({
-	addRecipe: function(recipeName, products) {
+	addRecipe: function(recipeName, link, products) {
 		var productStats = getRecipeStats(products);
 		var productsWithWeight = products.map(function(product) {
 			return {
@@ -14,7 +14,8 @@ Meteor.methods({
 			protein: productStats.protein,
 			fat: productStats.fat,
 			carb: productStats.carb,
-			products: productsWithWeight
+			products: productsWithWeight,
+			link: link
 		}
 	
 		Recipes.insert(recipe);
@@ -41,6 +42,11 @@ Meteor.methods({
 	},
 	deleteRecipe: function(recipeId) {
 		Recipes.remove(recipeId);
+	},
+	addLink: function(recipeId, link) {
+		var recipe = Recipes.findOne(recipeId);
+		recipe.link = link;
+		Recipes.update(recipeId, recipe);
 	}
 });
 

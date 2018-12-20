@@ -33,13 +33,14 @@ Template.NewRecipes.events({
 	'submit form': function(event, template) {
 		event.preventDefault();
 		var recipeId = Session.get('recipeToEdit')._id;
+		var link = event.target.linkTextBox.value;
 		if(recipeId) {
 			var recipeName = event.target.recipeName.value;
 			Meteor.call('editRecipe', recipeId, recipeName, Session.get('choosenProducts'));
 			Session.set('openEditModal', false);
 		} else {
 			var recipeName = event.target.recipeName.value;
-			Meteor.call('addRecipe', recipeName, Session.get('choosenProducts'));
+			Meteor.call('addRecipe', recipeName, link, Session.get('choosenProducts'));
 			event.target.recipeName.value = ""
 			Session.set('choosenProducts', []);
 		}

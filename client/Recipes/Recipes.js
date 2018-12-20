@@ -21,6 +21,25 @@ Template.Recipes.helpers({
 });
 
 Template.Recipes.events({
+	'submit form': function(event, template) {
+		event.preventDefault();
+		var link = event.target.linkTextBox.value;
+		Meteor.call('addLink', this._id, link);
+		event.target.linkTextBox.value = "";
+		$(event.target).fadeOut();
+		
+	},
+	'click .addLink': function(event, template) {
+		event.preventDefault();
+		if(event.target.addLink) {
+			event.target.addLink = false;
+		 	$(event.target).parent().parent().children("#edit-link").fadeOut();
+		}
+		else {
+			event.target.addLink = true;
+			$(event.target).parent().parent().children("#edit-link").fadeIn();
+		}
+	},
 	'click .edit-product': function(event, template) {
 		var products = this.products.map(product => {
 			return {
